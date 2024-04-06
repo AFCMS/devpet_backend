@@ -1,0 +1,8 @@
+projects:
+  GitHub API:
+    schema:
+      - https://api.github.com/graphql:
+          headers:
+            Authorization: Bearer ${GITHUB_TOKEN}
+    include:
+      - src/fetch_github.ts
