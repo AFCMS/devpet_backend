@@ -1,0 +1,26 @@
+---
+name: NodeJS
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "lts/iron"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
