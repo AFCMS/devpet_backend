@@ -4,32 +4,29 @@ SPDX-License-Identifier: GPL-3.0-or-later
 */
 import "dotenv/config"
 import * as commander from "commander"
-import {SerialPort, ReadlineParser} from "serialport"
-
-
-import TestGithub from "./src/fetch_github.js"
 import CommHandler from "./src/CommHandler.js"
-import chalk from "chalk";
+import GithubClient from "./src/api/github/GithubClient.js";
 
 const program = new commander.Command()
 
 program
-        .name("DevPet Backend")
-        .description("DevPet NodeJS Backend, handle serial communication, data retriving/processing and more")
-        .command("run").description("Run script")
-        .argument("<script>")
-        .action((script) => {
-            console.log(`Running script with args ${script}`)
-            const handler = new CommHandler()
-        })
+    .name("DevPet Backend")
+    .description("DevPet NodeJS Backend, handle serial communication, data retriving/processing and more")
+    .command("run").description("Run script")
+    .argument("<script>")
+    .action((script) => {
+        console.log(`Running script with args ${script}`)
+        const handler = new CommHandler()
+    })
 
 program
-        .command("test")
-        .description("Testing command")
-        .action(async () => {
-            console.log("Testing command")
-            await TestGithub()
-        })
+    .command("test")
+    .description("Testing command")
+    .action(async () => {
+        console.log("Testing command")
+        const gh_client = new GithubClient(process.env.GITHUB_TOKEN)
+        console.log(await gh_client.fetchCommitCountForMonth())
+    })
 
 program.parse(process.argv);
 
