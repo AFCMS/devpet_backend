@@ -1,0 +1,7 @@
+query ($startTime: DateTime, $endTime: DateTime) {
+    viewer {
+        contributionsCollection(from: $startTime, to: $endTime) {
+            totalCommitContributions,
+        }
+    }
+}

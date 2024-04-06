@@ -5,4 +5,5 @@ projects:
           headers:
             Authorization: Bearer ${GITHUB_TOKEN}
     include:
-      - src/fetch_github.ts
+      - src/api/github/*.ts
+      - src/api/github/queries/*.graphql
