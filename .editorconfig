@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2024 AFCMS <afcm.contact@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
+
 root = true
 
 [*]
@@ -13,7 +16,7 @@ ij_formatter_off_tag = @formatter:off
 ij_formatter_on_tag = @formatter:on
 ij_formatter_tags_enabled = true
 ij_smart_tabs = false
-ij_visual_guides = 
+ij_visual_guides =
 ij_wrap_on_typing = false
 
 [.editorconfig]
@@ -44,7 +47,7 @@ ij_typescript_array_initializer_wrap = off
 ij_typescript_assignment_wrap = off
 ij_typescript_binary_operation_sign_on_next_line = false
 ij_typescript_binary_operation_wrap = off
-ij_typescript_blacklist_imports = rxjs/Rx,node_modules/**,**/node_modules/**,@angular/material,@angular/material/typings/**
+ij_typescript_blacklist_imports = rxjs/Rx, node_modules/**, **/node_modules/**, @angular/material, @angular/material/typings/**
 ij_typescript_blank_lines_after_imports = 1
 ij_typescript_blank_lines_around_class = 1
 ij_typescript_blank_lines_around_field = 0
@@ -113,7 +116,7 @@ ij_typescript_prefer_explicit_types_function_expression_returns = false
 ij_typescript_prefer_explicit_types_function_returns = false
 ij_typescript_prefer_explicit_types_vars_fields = false
 ij_typescript_prefer_parameters_wrap = false
-ij_typescript_property_prefix = 
+ij_typescript_property_prefix =
 ij_typescript_reformat_c_style_comments = false
 ij_typescript_space_after_colon = true
 ij_typescript_space_after_comma = true
@@ -218,7 +221,7 @@ ij_javascript_array_initializer_wrap = off
 ij_javascript_assignment_wrap = off
 ij_javascript_binary_operation_sign_on_next_line = false
 ij_javascript_binary_operation_wrap = off
-ij_javascript_blacklist_imports = rxjs/Rx,node_modules/**,**/node_modules/**,@angular/material,@angular/material/typings/**
+ij_javascript_blacklist_imports = rxjs/Rx, node_modules/**, **/node_modules/**, @angular/material, @angular/material/typings/**
 ij_javascript_blank_lines_after_imports = 1
 ij_javascript_blank_lines_around_class = 1
 ij_javascript_blank_lines_around_field = 0
@@ -283,7 +286,7 @@ ij_javascript_prefer_explicit_types_function_expression_returns = false
 ij_javascript_prefer_explicit_types_function_returns = false
 ij_javascript_prefer_explicit_types_vars_fields = false
 ij_javascript_prefer_parameters_wrap = false
-ij_javascript_property_prefix = 
+ij_javascript_property_prefix =
 ij_javascript_reformat_c_style_comments = false
 ij_javascript_space_after_colon = true
 ij_javascript_space_after_comma = true
