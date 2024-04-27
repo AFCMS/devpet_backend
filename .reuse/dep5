@@ -1,0 +1,22 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: devpet_backend
+Upstream-Contact: AFCMS <afcm.contact@gmail.com>
+Source: https://github.com/AFCMS/devpet_backend
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...
+
+Files: package*.json
+Copyright: 2024 AFCMS <afcm.contact@gmail.com>
+License: CC0-1.0
+
+Files: tsconfig.json
+Copyright: 2024 AFCMS <afcm.contact@gmail.com>
+License: CC0-1.0
+
+Files: .nvmrc
+Copyright: 2024 AFCMS <afcm.contact@gmail.com>
+License: CC0-1.0
