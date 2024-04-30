@@ -15,6 +15,10 @@ Files: .nvmrc
 Copyright: 2024 AFCMS <afcm.contact@gmail.com>
 License: CC0-1.0
 
+Files: .env.example
+Copyright: 2024 AFCMS <afcm.contact@gmail.com>
+License: CC0-1.0
+
 Files: .vscode/extensions.json
 Copyright: 2024 AFCMS <afcm.contact@gmail.com>
 License: CC0-1.0

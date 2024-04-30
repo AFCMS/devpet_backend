@@ -12,7 +12,14 @@ declare global {
              *
              * Must have the `read:user` scope, overwise private profile data will not be accessible
              */
-            GITHUB_TOKEN: string;
+            DEVPET_GITHUB_TOKEN: string;
+
+            /**
+             * The path to the serial port to use
+             *
+             * @example "/dev/rfcomm0"
+             */
+            DEVPET_SERIAL_PORT: string;
         }
     }
 }
