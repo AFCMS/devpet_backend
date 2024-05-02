@@ -1,6 +1,3 @@
-// SPDX-FileCopyrightText: 2024 AFCMS <afcm.contact@gmail.com>
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 import globals from "globals";
 import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
