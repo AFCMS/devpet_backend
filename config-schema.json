@@ -17,6 +17,5 @@
   "required": [
     "github_token",
     "serial_port"
-  ],
-  "additionalItems": false
+  ]
 }
