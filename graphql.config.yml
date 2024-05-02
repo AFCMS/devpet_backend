@@ -6,7 +6,7 @@ projects:
     schema:
       - https://api.github.com/graphql:
           headers:
-            Authorization: Bearer ${GITHUB_TOKEN}
+            Authorization: Bearer ${DEVPET_GITHUB_TOKEN}
     include:
       - src/api/github/*.ts
       - src/api/github/queries/*.graphql
