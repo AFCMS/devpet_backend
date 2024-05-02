@@ -8,6 +8,7 @@
     "start": "tsc && node dist/index.js",
     "build": "tsc",
     "prod": "node dist/index.js",
+    "lint": "eslint *.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -24,7 +25,11 @@
     "serialport": "^12.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.1.1",
     "@types/node": "^20.12.8",
-    "typescript": "^5.4.5"
+    "eslint": "^8.57.0",
+    "globals": "^15.1.0",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.8.0"
   }
 }

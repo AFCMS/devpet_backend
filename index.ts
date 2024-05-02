@@ -29,7 +29,7 @@ program
     .action(async () => {
         console.log(chalk.green(splashScreen))
         console.log(`Running script with args`)
-        const handler = new CommHandler(process.env.DEVPET_SERIAL_PORT, true)
+        new CommHandler(process.env.DEVPET_SERIAL_PORT, true)
 
         /*setTimeout(() => {
             console.log(handler.commandQueue)
