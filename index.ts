@@ -7,6 +7,7 @@ import chalk from "chalk";
 
 import GithubClient from "./src/api/github/GithubClient.js";
 import CommHandler from "./src/CommHandler.js";
+import ConfigManager from "./src/ConfigManager.js";
 
 const splashScreen = `╔════════════════════════════════════╗                      
 ║     ____            ____       __  ║                      
@@ -29,7 +30,8 @@ program
     .action(async () => {
         console.log(chalk.green(splashScreen))
         console.log(`Running script with args`)
-        new CommHandler(process.env.DEVPET_SERIAL_PORT, true)
+        const config = new ConfigManager()
+        new CommHandler(config.SERIAL_PORT, true)
 
         /*setTimeout(() => {
             console.log(handler.commandQueue)
@@ -49,7 +51,8 @@ program
     .description("Test the API queries")
     .action(async () => {
         console.log(chalk.green(splashScreen))
-        const gh_client = new GithubClient(process.env.DEVPET_GITHUB_TOKEN)
+        const config = new ConfigManager()
+        const gh_client = new GithubClient(config.GITHUB_TOKEN)
         console.log(await gh_client.fetchCommitCountForMonth())
     })
 
