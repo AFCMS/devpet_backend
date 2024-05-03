@@ -1,5 +1,3 @@
-import * as path from "node:path";
-
 import GithubClient from "./GithubClient.js";
 import * as fs from "node:fs";
 
@@ -15,6 +13,8 @@ class GithubState {
 
     constructor(ghClient: GithubClient) {
         this.ghClient = ghClient;
+
+        this.loadState();
     }
 
     public async step(): Promise<GithubStateStep> {
@@ -24,20 +24,29 @@ class GithubState {
             console.log(`New commit detected! ${commitCount} total commits`)
             this.previousCommitCount = commitCount;
         }
+
+        this.saveState();
+
         return {
             newCommits: newCommits
         }
     }
 
     private saveState() {
-        const data = {}
-        fs.writeFileSync(path.resolve(__dirname, GithubState.FILE_NAME_STATE), JSON.stringify(data, null, 2));
+        const data = {
+            previousCommitCount: this.previousCommitCount,
+            currentMonth: new Date().getMonth(),
+        }
+        fs.writeFileSync(GithubState.FILE_NAME_STATE, JSON.stringify(data, null, 2));
     }
 
     private loadState() {
-        const fpath = path.resolve(__dirname, GithubState.FILE_NAME_STATE);
-        if (fs.existsSync(fpath)) {
-            const data = JSON.parse(fs.readFileSync(fpath, "utf-8"));
+        if (fs.existsSync(GithubState.FILE_NAME_STATE)) {
+            const data = JSON.parse(fs.readFileSync(GithubState.FILE_NAME_STATE, "utf-8"));
+
+            if (data.currentMonth === new Date().getMonth()) {
+                this.previousCommitCount = data.previousCommitCount;
+            }
         }
     }
 }
