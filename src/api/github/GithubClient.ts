@@ -10,17 +10,42 @@ import {Octokit} from "octokit"
  */
 export default class GithubClient {
     /**
+     * The instance of the GithubClient, used to prevent creating multiple instances
+     */
+    private static instance: GithubClient | null = null;
+
+    /**
      * The token used to authenticate the client, must have the `read:user` scope
      */
     private readonly token: string;
+
     /**
      * The octokit instance used to make requests
      */
     private readonly octokit: Octokit;
 
-    public constructor(token: string) {
+    /**
+     * Create a new GithubClient instance
+     * @param token
+     * @private
+     */
+    private constructor(token: string) {
         this.token = token;
         this.octokit = new Octokit({auth: this.token})
+    }
+
+    /**
+     * Get a GithubClient, prevent creating multiple instances of the client
+     * @param token
+     */
+    public static getInstance(token?: string): GithubClient {
+        if (!GithubClient.instance) {
+            if (!token) {
+                throw new Error("No token provided and no instance available")
+            }
+            GithubClient.instance = new GithubClient(token);
+        }
+        return GithubClient.instance;
     }
 
     /**
@@ -69,5 +94,61 @@ export default class GithubClient {
         const {startTime, endTime} = GithubClient.getMonthStartEndDates(date)
 
         return this.fetchCommitCountForRange(startTime, endTime)
+    }
+
+    public async fetchActivityForRange(startTime: Date, endTime: Date) {
+        console.log(startTime, endTime)
+        const response = await this.octokit.graphql(`
+            query ($startTime: DateTime, $endTime: DateTime, $first: Int) {
+                viewer {
+                    contributionsCollection(from: $startTime, to: $endTime) {
+                        pullRequestContributions(first: $first) {
+                            nodes {
+                                pullRequest {
+                                    title
+                                    createdAt
+                                    mergedAt
+                                    state
+                                    author {
+                                        login
+                                    }
+                                    repository {
+                                        name
+                                        owner {
+                                            login
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        issueContributions(first: $first) {
+                            nodes {
+                                issue {
+                                    title
+                                    repository {
+                                        name
+                                        owner {
+                                            login
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        totalCommitContributions,
+                    }
+                }
+                rateLimit {
+                    limit
+                    remaining
+                    used
+                    resetAt
+                }
+            }
+        `, {
+            startTime: startTime.toISOString(),
+            endTime: endTime.toISOString(),
+            first: 20,
+        })
+        console.log(response)
     }
 }

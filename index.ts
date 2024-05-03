@@ -6,7 +6,7 @@ import * as commander from "commander"
 import chalk from "chalk";
 
 import GithubClient from "./src/api/github/GithubClient.js";
-import CommHandler from "./src/CommHandler.js";
+import GithubState from "./src/api/github/GithubState.js";
 
 const splashScreen = `╔════════════════════════════════════╗                      
 ║     ____            ____       __  ║                      
@@ -29,7 +29,16 @@ program
     .action(async () => {
         console.log(chalk.green(splashScreen))
         console.log(`Running script with args`)
-        new CommHandler(process.env.DEVPET_SERIAL_PORT, true)
+        const ghClient = GithubClient.getInstance(process.env.DEVPET_GITHUB_TOKEN)
+        const ghState = new GithubState(ghClient)
+        //new CommHandler(process.env.DEVPET_SERIAL_PORT, true)
+
+        setInterval(async () => {
+            //const pastDate = new Date()
+            //pastDate.setMinutes(pastDate.getMinutes() - 1)
+            //console.log(await ghClient.fetchActivityForRange(pastDate, new Date()))
+            console.log(await ghState.step());
+        }, 30 * 1000)
 
         /*setTimeout(() => {
             console.log(handler.commandQueue)
@@ -49,8 +58,13 @@ program
     .description("Test the API queries")
     .action(async () => {
         console.log(chalk.green(splashScreen))
-        const gh_client = new GithubClient(process.env.DEVPET_GITHUB_TOKEN)
-        console.log(await gh_client.fetchCommitCountForMonth())
+        const ghClient = GithubClient.getInstance(process.env.DEVPET_GITHUB_TOKEN)
+        console.log(await ghClient.fetchCommitCountForMonth())
+        const d = new Date()
+        d.setMinutes(
+            d.getDay() - 1
+        )
+        await ghClient.fetchActivityForRange(d, new Date())
     })
 
 program.parse(process.argv);
