@@ -62,41 +62,13 @@ export default class GithubClient {
     }
 
     /**
-     * Fetch the number of commits made by the token owner for a date range
-     * @param startTime The start of the date range
-     * @param endTime The end of the date range
+     * Fetch the activity (commit count, prs, issues) of the token owner for a date range
+     * @param startTime
+     * @param endTime
+     * @param maxEvents The maximum number of events to fetch for PRs and issues
      * @throws GraphqlResponseError
      */
-    public async fetchCommitCountForRange(startTime: Date, endTime: Date): Promise<number> {
-        const response = await this.octokit.graphql<{
-            viewer: { contributionsCollection: { totalCommitContributions: number } }
-        }>(`
-            query ($startTime: DateTime, $endTime: DateTime) {
-                viewer {
-                    contributionsCollection(from: $startTime, to: $endTime) {
-                        totalCommitContributions,
-                    }
-                }
-            }
-        `, {
-            startTime: startTime.toISOString(),
-            endTime: endTime.toISOString()
-        })
-
-        return response.viewer.contributionsCollection.totalCommitContributions
-    }
-
-    /**
-     * Fetch the number of commits made by the token owner for the current month or a specific one
-     * @throws GraphqlResponseError
-     */
-    public async fetchCommitCountForMonth(date?: Date): Promise<number> {
-        const {startTime, endTime} = GithubClient.getMonthStartEndDates(date)
-
-        return this.fetchCommitCountForRange(startTime, endTime)
-    }
-
-    public async fetchActivityForRange(startTime: Date, endTime: Date) {
+    public async fetchActivityForRange(startTime: Date, endTime: Date, maxEvents: number) {
         console.log(startTime, endTime)
         const response = await this.octokit.graphql<{
             viewer: {
@@ -167,15 +139,19 @@ export default class GithubClient {
         `, {
             startTime: startTime.toISOString(),
             endTime: endTime.toISOString(),
-            first: 20,
+            first: maxEvents,
         })
-        // console.log(response.viewer.contributionsCollection.issueContributions.nodes)
         return response.viewer.contributionsCollection
     }
 
-    public async fetchActivityForMonth() {
+    /**
+     * Fetch the activity (commit count, prs, issues) of the token owner for the current month
+     * @param maxEvents The maximum number of events to fetch for PRs and issues
+     * @throws GraphqlResponseError
+     */
+    public async fetchActivityForMonth(maxEvents: number) {
         const {startTime, endTime} = GithubClient.getMonthStartEndDates(new Date())
 
-        return this.fetchActivityForRange(startTime, endTime)
+        return this.fetchActivityForRange(startTime, endTime, maxEvents)
     }
 }

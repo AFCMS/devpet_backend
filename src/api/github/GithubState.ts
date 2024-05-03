@@ -7,6 +7,11 @@ import * as fs from "node:fs";
 
 import GithubClient from "./GithubClient.js";
 
+/**
+ * The data returned by the GithubState.step method
+ *
+ * @see GithubState.step
+ */
 type GithubStateStep = {
     newCommits: number;
     newIssues: string[];
@@ -19,11 +24,47 @@ type GithubStateStep = {
  * Saves the data to a file to keep track of the previous state
  */
 class GithubState {
+    /**
+     * The instance of the GithubState, used to prevent creating multiple instances
+     */
     private static instance: GithubState;
+
+    /**
+     * The file name to save the state to
+     * @private
+     */
     private static readonly FILE_NAME_STATE = "github-state.json";
+
+    /**
+     * The maximum number of events to fetch for PRs and issues
+     *
+     * Should reflect the maximum amount of events that can be fetched in a single request
+     * @private
+     */
+    private static readonly MAX_EVENT_COUNT = 20;
+
+    /**
+     * The previous commit count
+     * @private
+     */
     private previousCommitCount: number = 0;
+
+    /**
+     * The last fetched issue date
+     * @private
+     */
     private lastFetchedIssueDate: Date | undefined;
+
+    /**
+     * The last fetched pull request date
+     * @private
+     */
     private lastFetchedPullRequestDate: Date | undefined;
+
+    /**
+     * The GithubClient instance to fetch data
+     * @private
+     */
     private ghClient: GithubClient;
 
     /**
@@ -51,9 +92,13 @@ class GithubState {
 
     /**
      * Do the periodical data fetch, return the data that changed since the last fetch
+     *
+     * Should typically be called at a regular interval to send data to the pet over serial
+     * @see CommHandler
+     * @throws GraphqlResponseError
      */
     public async step(): Promise<GithubStateStep> {
-        const data = await this.ghClient.fetchActivityForMonth();
+        const data = await this.ghClient.fetchActivityForMonth(GithubState.MAX_EVENT_COUNT);
         const commitCount = data.totalCommitContributions;
         const newCommits = commitCount - this.previousCommitCount;
         if (newCommits > 0) {
