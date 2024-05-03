@@ -30,7 +30,7 @@ program
         console.log(chalk.green(splashScreen))
         console.log(`Running script with args`)
         const ghClient = GithubClient.getInstance(process.env.DEVPET_GITHUB_TOKEN)
-        const ghState = new GithubState(ghClient)
+        const ghState = GithubState.getInstance(ghClient)
         //new CommHandler(process.env.DEVPET_SERIAL_PORT, true)
 
         setInterval(async () => {

@@ -11,10 +11,20 @@ class GithubState {
     private previousCommitCount: number = 0;
     private ghClient: GithubClient;
 
-    constructor(ghClient: GithubClient) {
+    private constructor(ghClient: GithubClient) {
         this.ghClient = ghClient;
 
         this.loadState();
+    }
+
+    public static getInstance(ghClient: GithubClient): GithubState {
+        if (!GithubState.instance) {
+            if (!ghClient) {
+                throw new Error("No GithubClient provided and no instance available")
+            }
+            GithubState.instance = new GithubState(ghClient);
+        }
+        return GithubState.instance;
     }
 
     public async step(): Promise<GithubStateStep> {
