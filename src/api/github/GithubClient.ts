@@ -98,7 +98,31 @@ export default class GithubClient {
 
     public async fetchActivityForRange(startTime: Date, endTime: Date) {
         console.log(startTime, endTime)
-        const response = await this.octokit.graphql(`
+        const response = await this.octokit.graphql<{
+            viewer: {
+                contributionsCollection: {
+                    issueContributions: {
+                        nodes: {
+                            issue: {
+                                title: string,
+                                repository: {},
+                                createdAt: string
+                            }
+                        }[]
+                    },
+                    pullRequestContributions: {
+                        nodes: {
+                            pullRequest: {
+                                title: string,
+                                repository: {}
+                                createdAt: string,
+                            }
+                        }[]
+                    },
+                    totalCommitContributions: number,
+                }
+            }
+        }>(`
             query ($startTime: DateTime, $endTime: DateTime, $first: Int) {
                 viewer {
                     contributionsCollection(from: $startTime, to: $endTime) {
@@ -106,18 +130,13 @@ export default class GithubClient {
                             nodes {
                                 pullRequest {
                                     title
-                                    createdAt
-                                    mergedAt
-                                    state
-                                    author {
-                                        login
-                                    }
                                     repository {
                                         name
                                         owner {
                                             login
                                         }
                                     }
+                                    createdAt
                                 }
                             }
                         },
@@ -131,6 +150,7 @@ export default class GithubClient {
                                             login
                                         }
                                     }
+                                    createdAt
                                 }
                             }
                         },
@@ -149,6 +169,13 @@ export default class GithubClient {
             endTime: endTime.toISOString(),
             first: 20,
         })
-        console.log(response)
+        // console.log(response.viewer.contributionsCollection.issueContributions.nodes)
+        return response.viewer.contributionsCollection
+    }
+
+    public async fetchActivityForMonth() {
+        const {startTime, endTime} = GithubClient.getMonthStartEndDates(new Date())
+
+        return this.fetchActivityForRange(startTime, endTime)
     }
 }

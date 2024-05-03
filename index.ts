@@ -38,7 +38,7 @@ program
             //pastDate.setMinutes(pastDate.getMinutes() - 1)
             //console.log(await ghClient.fetchActivityForRange(pastDate, new Date()))
             console.log(await ghState.step());
-        }, 30 * 1000)
+        }, 10 * 1000)
 
         /*setTimeout(() => {
             console.log(handler.commandQueue)
@@ -59,7 +59,7 @@ program
     .action(async () => {
         console.log(chalk.green(splashScreen))
         const ghClient = GithubClient.getInstance(process.env.DEVPET_GITHUB_TOKEN)
-        console.log(await ghClient.fetchCommitCountForMonth())
+        //console.log(await ghClient.fetchCommitCountForMonth())
         const d = new Date()
         d.setMinutes(
             d.getDay() - 1

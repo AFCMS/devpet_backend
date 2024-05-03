@@ -9,6 +9,8 @@ import GithubClient from "./GithubClient.js";
 
 type GithubStateStep = {
     newCommits: number;
+    newIssues: string[];
+    newPullRequests: string[];
 }
 
 /**
@@ -20,6 +22,8 @@ class GithubState {
     private static instance: GithubState;
     private static readonly FILE_NAME_STATE = "github-state.json";
     private previousCommitCount: number = 0;
+    private lastFetchedIssueDate: Date | undefined;
+    private lastFetchedPullRequestDate: Date | undefined;
     private ghClient: GithubClient;
 
     /**
@@ -49,17 +53,38 @@ class GithubState {
      * Do the periodical data fetch, return the data that changed since the last fetch
      */
     public async step(): Promise<GithubStateStep> {
-        const commitCount = await this.ghClient.fetchCommitCountForMonth();
+        const data = await this.ghClient.fetchActivityForMonth();
+        const commitCount = data.totalCommitContributions;
         const newCommits = commitCount - this.previousCommitCount;
         if (newCommits > 0) {
             console.log(`New commit detected! ${commitCount} total commits`)
             this.previousCommitCount = commitCount;
         }
 
+        const newIssues = data.issueContributions.nodes.filter((issue) => {
+            return this.lastFetchedIssueDate ? new Date(issue.issue.createdAt) > this.lastFetchedIssueDate : true;
+        })
+
+        const newPullRequests = data.pullRequestContributions.nodes.filter((pr) => {
+            return this.lastFetchedPullRequestDate ? new Date(pr.pullRequest.createdAt) > this.lastFetchedPullRequestDate : true;
+        })
+
+        if (newIssues.length > 0) {
+            console.log(`New issues detected! ${newIssues.length} new issues`)
+            this.lastFetchedIssueDate = new Date(newIssues[0].issue.createdAt);
+        }
+
+        if (newPullRequests.length > 0) {
+            console.log(`New pull requests detected! ${newPullRequests.length} new pull requests`)
+            this.lastFetchedPullRequestDate = new Date(newPullRequests[0].pullRequest.createdAt);
+        }
+
         this.saveState();
 
         return {
-            newCommits: newCommits
+            newCommits: newCommits,
+            newIssues: newIssues.map(issue => JSON.stringify(issue.issue.title)),
+            newPullRequests: newPullRequests.map(pr => JSON.stringify(pr.pullRequest.title))
         }
     }
 
@@ -71,6 +96,8 @@ class GithubState {
         const data = {
             previousCommitCount: this.previousCommitCount,
             currentMonth: new Date().getMonth(),
+            lastFetchedIssueDate: this.lastFetchedIssueDate,
+            lastFetchedPullRequestDate: this.lastFetchedPullRequestDate
         }
         fs.writeFileSync(GithubState.FILE_NAME_STATE, JSON.stringify(data, null, 2));
     }
@@ -86,6 +113,8 @@ class GithubState {
             if (data.currentMonth === new Date().getMonth()) {
                 this.previousCommitCount = data.previousCommitCount;
             }
+            this.lastFetchedIssueDate = new Date(data.lastFetchedIssueDate);
+            this.lastFetchedPullRequestDate = new Date(data.lastFetchedPullRequestDate);
         }
     }
 }
