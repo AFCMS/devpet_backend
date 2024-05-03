@@ -5,18 +5,30 @@ type GithubStateStep = {
     newCommits: number;
 }
 
+/**
+ * Class to keep track of the state of the data fetched from the Github API
+ *
+ * Saves the data to a file to keep track of the previous state
+ */
 class GithubState {
     private static instance: GithubState;
     private static readonly FILE_NAME_STATE = "github-state.json";
     private previousCommitCount: number = 0;
     private ghClient: GithubClient;
 
+    /**
+     * Create a new GithubState instance
+     */
     private constructor(ghClient: GithubClient) {
         this.ghClient = ghClient;
 
         this.loadState();
     }
 
+    /**
+     * Get the GithubState instance, prevent creating multiple instances of the state
+     * @param ghClient
+     */
     public static getInstance(ghClient: GithubClient): GithubState {
         if (!GithubState.instance) {
             if (!ghClient) {
@@ -27,6 +39,9 @@ class GithubState {
         return GithubState.instance;
     }
 
+    /**
+     * Do the periodical data fetch, return the data that changed since the last fetch
+     */
     public async step(): Promise<GithubStateStep> {
         const commitCount = await this.ghClient.fetchCommitCountForMonth();
         const newCommits = commitCount - this.previousCommitCount;
@@ -42,6 +57,10 @@ class GithubState {
         }
     }
 
+    /**
+     * Save the current state to a file
+     * @private
+     */
     private saveState() {
         const data = {
             previousCommitCount: this.previousCommitCount,
@@ -50,6 +69,10 @@ class GithubState {
         fs.writeFileSync(GithubState.FILE_NAME_STATE, JSON.stringify(data, null, 2));
     }
 
+    /**
+     * Load the state from a file
+     * @private
+     */
     private loadState() {
         if (fs.existsSync(GithubState.FILE_NAME_STATE)) {
             const data = JSON.parse(fs.readFileSync(GithubState.FILE_NAME_STATE, "utf-8"));
