@@ -64,7 +64,7 @@ program
         d.setMinutes(
             d.getDay() - 1
         )
-        await ghClient.fetchActivityForRange(d, new Date())
+        await ghClient.fetchActivityForRange(d, new Date(), 20)
     })
 
 program.parse(process.argv);
