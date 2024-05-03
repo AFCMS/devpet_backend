@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2024 AFCMS <afcm.contact@gmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+query ($startTime: DateTime, $endTime: DateTime, $first: Int) {
+    viewer {
+        contributionsCollection(from: $startTime, to: $endTime) {
+            pullRequestContributions(first: $first) {
+                nodes {
+                    pullRequest {
+                        title
+                        repository {
+                            name
+                            owner {
+                                login
+                            }
+                        }
+                        createdAt
+                    }
+                }
+            },
+            issueContributions(first: $first) {
+                nodes {
+                    issue {
+                        title
+                        repository {
+                            name
+                            owner {
+                                login
+                            }
+                        }
+                        createdAt
+                    }
+                }
+            },
+            totalCommitContributions,
+        }
+    }
+    rateLimit {
+        limit
+        remaining
+        used
+        resetAt
+    }
+}
