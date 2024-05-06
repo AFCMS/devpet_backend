@@ -15,6 +15,16 @@ declare global {
             DEVPET_GITHUB_TOKEN: string;
 
             /**
+             * Spotify client ID
+             */
+            DEVPET_SPOTIFY_CLIENT_ID: string;
+
+            /**
+             * Spotify client secret
+             */
+            DEVPET_SPOTIFY_CLIENT_SECRET: string;
+
+            /**
              * The path to the serial port to use
              *
              * @example "/dev/rfcomm0"

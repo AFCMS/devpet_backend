@@ -7,6 +7,7 @@ import chalk from "chalk";
 
 import GithubClient from "./src/api/github/GithubClient";
 import GithubState from "./src/api/github/GithubState";
+import SpotifyClient from "./src/api/spotify/SpotifyClient";
 
 const splashScreen = `╔════════════════════════════════════╗                      
 ║     ____            ____       __  ║                      
@@ -65,6 +66,26 @@ program
             d.getDay() - 1
         )
         await ghClient.fetchActivityForRange(d, new Date(), 20)
+    })
+
+program
+    .command("spotify-test")
+    .description("Test the Spotify API queries")
+    .action(async () => {
+        console.log(chalk.green(splashScreen))
+        const spClient = SpotifyClient.getInstance(process.env.DEVPET_SPOTIFY_CLIENT_ID, process.env.DEVPET_SPOTIFY_CLIENT_SECRET)
+        setInterval(async () => {
+            console.log(await spClient.getPlayingTrack())
+        }, 10 * 1000)
+    })
+
+program
+    .command("spotify-login")
+    .description("Start the Spotify OAuth2 login flow")
+    .action(async () => {
+        console.log(chalk.green(splashScreen))
+        const spClient = SpotifyClient.getInstance(process.env.DEVPET_SPOTIFY_CLIENT_ID, process.env.DEVPET_SPOTIFY_CLIENT_SECRET)
+        await spClient.refreshTokenFlow()
     })
 
 program.parse(process.argv);
