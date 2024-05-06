@@ -15,7 +15,7 @@ export default class GithubClient {
     private static instance: GithubClient | null = null;
 
     /**
-     * The token used to authenticate the client, must have the `read:user` scope
+     * The token used to authenticate the client, must have the `read:user` scope and the `repo` scope to include private contributions
      */
     private readonly token: string;
 

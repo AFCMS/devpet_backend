@@ -10,7 +10,7 @@ declare global {
             /**
              * GitHub token to access the GitHub API
              *
-             * Must have the `read:user` scope, overwise private profile data will not be accessible
+             * Must have the `read:user` scope and the `repo` scope overwise private profile data will not be accessible
              */
             DEVPET_GITHUB_TOKEN: string;
 
