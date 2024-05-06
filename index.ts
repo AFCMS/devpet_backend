@@ -5,8 +5,8 @@ import "dotenv/config"
 import * as commander from "commander"
 import chalk from "chalk";
 
-import GithubClient from "./src/api/github/GithubClient.js";
-import GithubState from "./src/api/github/GithubState.js";
+import GithubClient from "./src/api/github/GithubClient";
+import GithubState from "./src/api/github/GithubState";
 
 const splashScreen = `╔════════════════════════════════════╗                      
 ║     ____            ____       __  ║                      

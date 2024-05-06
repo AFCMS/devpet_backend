@@ -5,7 +5,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as fs from "node:fs";
 
-import GithubClient from "./GithubClient.js";
+import GithubClient from "./GithubClient";
 
 /**
  * The data returned by the GithubState.step method
