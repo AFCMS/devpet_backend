@@ -46,13 +46,6 @@ program
     })
 
 program
-    .command("simulate")
-    .description("Run simulation backend (no real data)")
-    .action(async () => {
-        console.log(chalk.green(splashScreen))
-    })
-
-program
     .command("github-test")
     .description("Test the GitHub API queries")
     .action(async () => {
