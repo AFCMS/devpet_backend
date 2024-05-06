@@ -32,12 +32,10 @@ program
         console.log(`Running script with args`)
         const ghClient = GithubClient.getInstance(process.env.DEVPET_GITHUB_TOKEN)
         const ghState = GithubState.getInstance(ghClient)
+        // const spClient = SpotifyClient.getInstance(process.env.DEVPET_SPOTIFY_CLIENT_ID, process.env.DEVPET_SPOTIFY_CLIENT_SECRET)
         //new CommHandler(process.env.DEVPET_SERIAL_PORT, true)
 
         setInterval(async () => {
-            //const pastDate = new Date()
-            //pastDate.setMinutes(pastDate.getMinutes() - 1)
-            //console.log(await ghClient.fetchActivityForRange(pastDate, new Date()))
             console.log(await ghState.step());
         }, 10 * 1000)
 
@@ -55,17 +53,16 @@ program
     })
 
 program
-    .command("test")
-    .description("Test the API queries")
+    .command("github-test")
+    .description("Test the GitHub API queries")
     .action(async () => {
         console.log(chalk.green(splashScreen))
         const ghClient = GithubClient.getInstance(process.env.DEVPET_GITHUB_TOKEN)
-        //console.log(await ghClient.fetchCommitCountForMonth())
-        const d = new Date()
-        d.setMinutes(
-            d.getDay() - 1
-        )
-        await ghClient.fetchActivityForRange(d, new Date(), 20)
+        const ghState = GithubState.getInstance(ghClient)
+
+        setInterval(async () => {
+            console.log(await ghState.step());
+        }, 10 * 1000)
     })
 
 program
