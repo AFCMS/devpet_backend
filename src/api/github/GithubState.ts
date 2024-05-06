@@ -16,6 +16,12 @@ type GithubStateStep = {
     newCommits: number;
     newIssues: string[];
     newPullRequests: string[];
+    rateLimit: {
+        limit: number,
+        remaining: number,
+        used: number,
+        resetAt: string,
+    };
 }
 
 /**
@@ -129,7 +135,8 @@ class GithubState {
         return {
             newCommits: newCommits,
             newIssues: newIssues.map(issue => JSON.stringify(issue.issue.title)),
-            newPullRequests: newPullRequests.map(pr => JSON.stringify(pr.pullRequest.title))
+            newPullRequests: newPullRequests.map(pr => JSON.stringify(pr.pullRequest.title)),
+            rateLimit: data.rateLimit,
         }
     }
 

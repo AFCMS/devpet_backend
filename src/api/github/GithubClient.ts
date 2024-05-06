@@ -45,6 +45,7 @@ export default class GithubClient {
             }
             GithubClient.instance = new GithubClient(token);
         }
+
         return GithubClient.instance;
     }
 
@@ -69,7 +70,6 @@ export default class GithubClient {
      * @throws GraphqlResponseError
      */
     public async fetchActivityForRange(startTime: Date, endTime: Date, maxEvents: number) {
-        console.log(startTime, endTime)
         const response = await this.octokit.graphql<{
             viewer: {
                 contributionsCollection: {
@@ -93,6 +93,12 @@ export default class GithubClient {
                     },
                     totalCommitContributions: number,
                 }
+            },
+            rateLimit: {
+                limit: number,
+                remaining: number,
+                used: number,
+                resetAt: string,
             }
         }>(`
             query ($startTime: DateTime, $endTime: DateTime, $first: Int) {
@@ -141,7 +147,8 @@ export default class GithubClient {
             endTime: endTime.toISOString(),
             first: maxEvents,
         })
-        return response.viewer.contributionsCollection
+
+        return {...response.viewer.contributionsCollection, rateLimit: response.rateLimit}
     }
 
     /**
