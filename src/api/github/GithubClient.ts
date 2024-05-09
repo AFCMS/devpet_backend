@@ -70,7 +70,7 @@ export default class GithubClient {
      * @throws GraphqlResponseError
      */
     public async fetchActivityForRange(startTime: Date, endTime: Date, maxEvents: number) {
-        const response = await this.octokit.graphql<{
+        const response: {
             viewer: {
                 contributionsCollection: {
                     issueContributions: {
@@ -100,7 +100,7 @@ export default class GithubClient {
                 used: number,
                 resetAt: string,
             }
-        }>(`
+        } = await this.octokit.graphql(`
             query ($startTime: DateTime, $endTime: DateTime, $first: Int) {
                 viewer {
                     contributionsCollection(from: $startTime, to: $endTime) {
