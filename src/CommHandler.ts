@@ -11,7 +11,7 @@ type CommandName = "ping" | "log" | string
 /**
  * The function definition for a command handler, playload will be an empty string if command contains no playload
  */
-type CommandHandler = (commHandler: CommHandler, playload: string) => void
+type CommandHandler = (commHandler: CommHandler, payload: string) => void
 
 /**
  * Class to handle serial communication with the ESP32
@@ -47,7 +47,7 @@ export default class CommHandler {
         this.parser.on("data", (data) => this.handleData(data))
         this.parser.on("error", (err) => this.handleError(err))
 
-        this.sendCommand("log", "TEST_PLAYLOAD")
+        this.sendCommand("log", "TEST_PAYLOAD")
     }
 
     /**
