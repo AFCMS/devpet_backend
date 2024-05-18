@@ -39,7 +39,7 @@ sudo dnf install bluez-deprecated
 sudo rfcomm connect /dev/rfcomm0 <DEVICE ADDRESS> 1
 ```
 
-> [!INFO]
+> [!NOTE]
 >
 > The `rfcomm` utility is deprecated and doesn't have a clear replacement.
 >
