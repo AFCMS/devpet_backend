@@ -31,7 +31,7 @@
     "@types/node": "^20.12.13",
     "eslint": "^8.57.0",
     "globals": "^15.3.0",
-    "tsx": "^4.11.0",
+    "tsx": "^4.11.2",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.11.0"
   }
