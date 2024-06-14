@@ -6,6 +6,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 import * as fs from "node:fs";
 import * as querystring from "node:querystring";
 
+// @deno-types="@types/express"
 import express from "express";
 import chalk from "chalk";
 import {AccessToken, SpotifyApi} from "@spotify/web-api-ts-sdk";

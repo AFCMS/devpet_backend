@@ -3,9 +3,9 @@ SPDX-FileCopyrightText: 2024 AFCMS <afcm.contact@gmail.com>
 SPDX-License-Identifier: GPL-3.0-or-later
 */
 
-import * as fs from "node:fs";
+import * as fs from "@std/fs";
 
-import GithubClient from "./GithubClient";
+import GithubClient from "./GithubClient.ts";
 
 /**
  * The data returned by the GithubState.step method
@@ -17,12 +17,12 @@ type GithubStateStep = {
     newIssues: string[];
     newPullRequests: string[];
     rateLimit: {
-        limit: number,
-        remaining: number,
-        used: number,
-        resetAt: string,
+        limit: number;
+        remaining: number;
+        used: number;
+        resetAt: string;
     };
-}
+};
 
 /**
  * Class to keep track of the state of the data fetched from the Github API
@@ -89,7 +89,9 @@ class GithubState {
     public static getInstance(ghClient: GithubClient): GithubState {
         if (!GithubState.instance) {
             if (!ghClient) {
-                throw new Error("No GithubClient provided and no instance available")
+                throw new Error(
+                    "No GithubClient provided and no instance available",
+                );
             }
             GithubState.instance = new GithubState(ghClient);
         }
@@ -104,40 +106,59 @@ class GithubState {
      * @throws GraphqlResponseError
      */
     public async step(): Promise<GithubStateStep> {
-        const data = await this.ghClient.fetchActivityForMonth(GithubState.MAX_EVENT_COUNT);
+        const data = await this.ghClient.fetchActivityForMonth(
+            GithubState.MAX_EVENT_COUNT,
+        );
         const commitCount = data.totalCommitContributions;
         const newCommits = commitCount - this.previousCommitCount;
         if (newCommits > 0) {
-            console.log(`New commit detected! ${commitCount} total commits`)
+            console.log(`New commit detected! ${commitCount} total commits`);
             this.previousCommitCount = commitCount;
         }
 
         const newIssues = data.issueContributions.nodes.filter((issue) => {
-            return this.lastFetchedIssueDate ? new Date(issue.issue.createdAt) > this.lastFetchedIssueDate : true;
-        })
+            return this.lastFetchedIssueDate
+                ? new Date(issue.issue.createdAt) > this.lastFetchedIssueDate
+                : true;
+        });
 
-        const newPullRequests = data.pullRequestContributions.nodes.filter((pr) => {
-            return this.lastFetchedPullRequestDate ? new Date(pr.pullRequest.createdAt) > this.lastFetchedPullRequestDate : true;
-        })
+        const newPullRequests = data.pullRequestContributions.nodes.filter(
+            (pr) => {
+                return this.lastFetchedPullRequestDate
+                    ? new Date(pr.pullRequest.createdAt) >
+                        this.lastFetchedPullRequestDate
+                    : true;
+            },
+        );
 
         if (newIssues.length > 0) {
-            console.log(`New issues detected! ${newIssues.length} new issues`)
+            console.log(`New issues detected! ${newIssues.length} new issues`);
             this.lastFetchedIssueDate = new Date(newIssues[0].issue.createdAt);
         }
 
         if (newPullRequests.length > 0) {
-            console.log(`New pull requests detected! ${newPullRequests.length} new pull requests`)
-            this.lastFetchedPullRequestDate = new Date(newPullRequests[0].pullRequest.createdAt);
+            console.log(
+                `New pull requests detected! ${newPullRequests.length} new pull requests`,
+            );
+            this.lastFetchedPullRequestDate = new Date(
+                newPullRequests[0].pullRequest.createdAt,
+            );
         }
 
         this.saveState();
 
+        // TODO: cleanup titles from Markdown stuff
+
         return {
             newCommits: newCommits,
-            newIssues: newIssues.map(issue => JSON.stringify(issue.issue.title)),
-            newPullRequests: newPullRequests.map(pr => JSON.stringify(pr.pullRequest.title)),
+            newIssues: newIssues.map((issue) =>
+                JSON.stringify(issue.issue.title.replace("`", ""))
+            ),
+            newPullRequests: newPullRequests.map((pr) =>
+                JSON.stringify(pr.pullRequest.title)
+            ),
             rateLimit: data.rateLimit,
-        }
+        };
     }
 
     /**
@@ -149,9 +170,13 @@ class GithubState {
             previousCommitCount: this.previousCommitCount,
             currentMonth: new Date().getMonth(),
             lastFetchedIssueDate: this.lastFetchedIssueDate,
-            lastFetchedPullRequestDate: this.lastFetchedPullRequestDate
-        }
-        fs.writeFileSync(GithubState.FILE_NAME_STATE, JSON.stringify(data, null, 2));
+            lastFetchedPullRequestDate: this.lastFetchedPullRequestDate,
+        };
+
+        Deno.writeTextFileSync(
+            GithubState.FILE_NAME_STATE,
+            JSON.stringify(data, null, 2),
+        );
     }
 
     /**
@@ -160,13 +185,17 @@ class GithubState {
      */
     private loadState() {
         if (fs.existsSync(GithubState.FILE_NAME_STATE)) {
-            const data = JSON.parse(fs.readFileSync(GithubState.FILE_NAME_STATE, "utf-8"));
+            const data = JSON.parse(
+                Deno.readTextFileSync(GithubState.FILE_NAME_STATE),
+            );
 
             if (data.currentMonth === new Date().getMonth()) {
                 this.previousCommitCount = data.previousCommitCount;
             }
             this.lastFetchedIssueDate = new Date(data.lastFetchedIssueDate);
-            this.lastFetchedPullRequestDate = new Date(data.lastFetchedPullRequestDate);
+            this.lastFetchedPullRequestDate = new Date(
+                data.lastFetchedPullRequestDate,
+            );
         }
     }
 }

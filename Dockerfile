@@ -1,0 +1,1 @@
+FROM denoland/deno AS builder
