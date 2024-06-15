@@ -8,6 +8,7 @@ import * as querystring from "node:querystring";
 
 import express from "express";
 import chalk from "chalk";
+import open from "open";
 import {AccessToken, SpotifyApi} from "@spotify/web-api-ts-sdk";
 
 export default class SpotifyClient {
@@ -71,7 +72,7 @@ export default class SpotifyClient {
     /**
      * Spotify OAuth2 flow to get the refresh token
      */
-    public async refreshTokenFlow() {
+    public async refreshTokenFlow(openBrowser: boolean = true) {
         const app = express();
 
         app.get("/spotify/success", (_, res) => {
@@ -133,16 +134,18 @@ export default class SpotifyClient {
                 this.saveState();
 
                 res.redirect("/spotify/success");
-                /*const sdk = SpotifyApi.withAccessToken(this.clientId, token as AccessToken);
-                setInterval(async function () {
-                    console.log(await sdk.player.getCurrentlyPlayingTrack())
-                }, 10000)*/
+
                 await this.doRefreshToken();
             }
         });
 
         console.log(chalk.green("Starting OAuth2 flow for Spotify client"))
-        console.log(chalk.green(`Open your browser at http://localhost:${SpotifyClient.LOCAL_SERVER_PORT}/spotify/login`))
+        if (openBrowser) {
+            console.log(chalk.green("Opening browser..."))
+            await open(`http://localhost:${SpotifyClient.LOCAL_SERVER_PORT}/spotify/login`);
+        } else {
+            console.log(chalk.green(`Open your browser at http://localhost:${SpotifyClient.LOCAL_SERVER_PORT}/spotify/login`))
+        }
         const server = app.listen(9600)
     }
 
