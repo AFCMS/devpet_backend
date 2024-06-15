@@ -9,6 +9,7 @@ import CommHandler from "./src/CommHandler";
 import GithubClient from "./src/api/github/GithubClient";
 import GithubState from "./src/api/github/GithubState";
 import SpotifyClient from "./src/api/spotify/SpotifyClient";
+import {PlaybackState} from "@spotify/web-api-ts-sdk";
 
 const splashScreen = `╔════════════════════════════════════╗                      
 ║     ____            ____       __  ║                      
@@ -39,8 +40,32 @@ program
         // Fetch data every 10s
         setInterval(async () => {
             const ghStep = await ghState.step()
-            const spPlaying = await spClient.getPlayingTrack()
-            console.log(ghStep);
+
+            // Spotify SDK sucks
+            let spPlaying: PlaybackState | undefined
+            try {
+                spPlaying = await spClient.getPlayingTrack()
+            } catch (TypeError) {
+                spPlaying = undefined
+            }
+
+            // Log all important data
+
+            console.log(chalk.green(`
+========= Sending Data ==========
+GitHub:
+- New commits: ${ghStep.newCommits}
+- New issues: ${ghStep.newIssues.length}
+- New pull requests: ${ghStep.newPullRequests.length}
+- Rate limit: ${ghStep.rateLimit.remaining}/${ghStep.rateLimit.limit} (reset at ${ghStep.rateLimit.resetAt})
+
+Spotify:
+- Playing: ${spPlaying && spPlaying.is_playing ? `${spPlaying.item.name} by ${
+                // @ts-ignore
+                spPlaying.item.artists.map((a: any) => a.name).join(", ")
+            }` : "Nothing"}
+=================================
+`))
 
             if (ghStep.newCommits > 0) {
                 handler.sendCommand("new-commits", ghStep.newCommits.toString())
