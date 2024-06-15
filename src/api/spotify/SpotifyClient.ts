@@ -159,9 +159,8 @@ export default class SpotifyClient {
 
     /**
      * Refresh the token using the refresh token
-     * @private
      */
-    private async doRefreshToken() {
+    public async doRefreshToken() {
         if (!this.refreshToken) {
             throw new Error("No refresh token available")
         }
