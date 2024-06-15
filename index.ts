@@ -64,10 +64,10 @@ program
             }
         }, 10 * 1000)
 
-        /*setTimeout(() => {
-            console.log(handler.commandQueue)
-            handler.close()
-        }, 5000)*/
+        // Refresh Spotify token every 30mn (the token should expire every 1h)
+        setInterval(async () => {
+            await spClient.doRefreshToken()
+        }, 30 * 60 * 1000)
     })
 
 program
