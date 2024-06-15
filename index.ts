@@ -41,7 +41,6 @@ program
             const ghStep = await ghState.step()
             const spPlaying = await spClient.getPlayingTrack()
             console.log(ghStep);
-            console.log(spPlaying);
 
             if (ghStep.newCommits > 0) {
                 handler.sendCommand("new-commits", ghStep.newCommits.toString())
