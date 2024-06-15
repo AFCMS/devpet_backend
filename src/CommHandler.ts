@@ -6,7 +6,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 import chalk from "chalk";
 import {ReadlineParser, SerialPort} from "serialport"
 
-type CommandName = "ping" | "log" | string
+type CommandName = "ping" | "log" | "music-play" | "new-issue" | "new-pr" | "new-commits" | string
 
 /**
  * The function definition for a command handler, playload will be an empty string if command contains no playload
