@@ -73,10 +73,10 @@ program
     .command("spotify-login")
     .description("Start the Spotify OAuth2 login flow")
     .option("-n, --no-browser", "Do not open the browser")
-    .action(async (noBrowser: boolean) => {
+    .action(async (options: { browser: boolean }) => {
         console.log(chalk.green(splashScreen))
         const spClient = SpotifyClient.getInstance(process.env.DEVPET_SPOTIFY_CLIENT_ID, process.env.DEVPET_SPOTIFY_CLIENT_SECRET)
-        await spClient.refreshTokenFlow(!noBrowser)
+        await spClient.refreshTokenFlow(options.browser)
     })
 
 program.parse(process.argv);
