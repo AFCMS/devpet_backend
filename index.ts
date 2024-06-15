@@ -5,6 +5,7 @@ import "dotenv/config"
 import * as commander from "commander"
 import chalk from "chalk";
 
+import CommHandler from "./src/CommHandler";
 import GithubClient from "./src/api/github/GithubClient";
 import GithubState from "./src/api/github/GithubState";
 import SpotifyClient from "./src/api/spotify/SpotifyClient";
@@ -32,11 +33,35 @@ program
         console.log(`Running script with args`)
         const ghClient = GithubClient.getInstance(process.env.DEVPET_GITHUB_TOKEN)
         const ghState = GithubState.getInstance(ghClient)
-        // const spClient = SpotifyClient.getInstance(process.env.DEVPET_SPOTIFY_CLIENT_ID, process.env.DEVPET_SPOTIFY_CLIENT_SECRET)
-        //new CommHandler(process.env.DEVPET_SERIAL_PORT, true)
+        const spClient = SpotifyClient.getInstance(process.env.DEVPET_SPOTIFY_CLIENT_ID, process.env.DEVPET_SPOTIFY_CLIENT_SECRET)
+        const handler = new CommHandler(process.env.DEVPET_SERIAL_PORT, true)
 
+        // Fetch data every 10s
         setInterval(async () => {
-            console.log(await ghState.step());
+            const ghStep = await ghState.step()
+            const spPlaying = await spClient.getPlayingTrack()
+            console.log(ghStep);
+            console.log(spPlaying);
+
+            if (ghStep.newCommits > 0) {
+                handler.sendCommand("new-commits", ghStep.newCommits.toString())
+            }
+
+            if (ghStep.newIssues.length > 0) {
+                for (const issue of ghStep.newIssues) {
+                    handler.sendCommand("new-issue", issue)
+                }
+            }
+
+            if (ghStep.newPullRequests.length > 0) {
+                for (const pr of ghStep.newPullRequests) {
+                    handler.sendCommand("new-pr", pr)
+                }
+            }
+
+            if (spPlaying && spPlaying.is_playing) {
+                handler.sendCommand("music-play",)
+            }
         }, 10 * 1000)
 
         /*setTimeout(() => {
