@@ -28,13 +28,13 @@ program
 program
     .command("run")
     .description("Run backend")
-    .action(async () => {
+    .option("-d, --debug", "Enable debug logs", false)
+    .action(async (options: { debug: boolean }) => {
         console.log(chalk.green(splashScreen))
-        console.log(`Running script with args`)
         const ghClient = GithubClient.getInstance(process.env.DEVPET_GITHUB_TOKEN)
         const ghState = GithubState.getInstance(ghClient)
         const spClient = SpotifyClient.getInstance(process.env.DEVPET_SPOTIFY_CLIENT_ID, process.env.DEVPET_SPOTIFY_CLIENT_SECRET)
-        const handler = new CommHandler(process.env.DEVPET_SERIAL_PORT, true)
+        const handler = new CommHandler(process.env.DEVPET_SERIAL_PORT, options.debug)
 
         // Fetch data every 10s
         setInterval(async () => {
