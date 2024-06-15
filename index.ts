@@ -60,7 +60,8 @@ program
             }
 
             if (spPlaying && spPlaying.is_playing) {
-                handler.sendCommand("music-play",)
+                // @ts-ignore Spotify SDK sucks
+                handler.sendCommand("music-play", `${spPlaying.item.name}^${spPlaying.item.artists.map((a: any) => a.name).join(", ")}`)
             }
         }, 10 * 1000)
 
