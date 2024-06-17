@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2024 AFCMS <afcm.contact@gmail.com>
 SPDX-License-Identifier: GPL-3.0-or-later
 */
 
-import * as fs from "node:fs";
+import fs from "node:fs";
 
 import GithubClient from "./GithubClient";
 
