@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2024 AFCMS <afcm.contact@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import readline from 'node:readline';
+
 import "dotenv/config"
 import * as commander from "commander"
 import chalk from "chalk";
@@ -21,6 +23,7 @@ const splashScreen = `╔══════════════════�
 ╚════════════════════════════════════╝`
 
 const program = new commander.Command()
+
 
 program
     .name("DevPet Backend")
@@ -95,6 +98,43 @@ Spotify:
         setInterval(async () => {
             await spClient.doRefreshToken()
         }, 30 * 60 * 1000)
+    })
+
+program
+    .command("run-test")
+    .description("Run backend with fake GitHub data")
+    .action(async () => {
+        console.log(chalk.green(splashScreen))
+        const spClient = SpotifyClient.getInstance(process.env.DEVPET_SPOTIFY_CLIENT_ID, process.env.DEVPET_SPOTIFY_CLIENT_SECRET)
+        const handler = new CommHandler(process.env.DEVPET_SERIAL_PORT, false)
+
+        // Refresh Spotify token every 30mn (the token should expire every 1h)
+        setInterval(async () => {
+            await spClient.doRefreshToken()
+        }, 30 * 60 * 1000)
+
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        })
+
+        const recursiveAsyncAskCommand = function () {
+            rl.question('', function (data) {
+                const match = data.trim().match(/([a-z_-]+)(?:\s+(.*))?$/);
+                console.log("'" + data + "'")
+                if (match) {
+                    const command = match[1]
+                    const payload = match[2] ?? ""
+                    handler.sendCommand(command, payload)
+                }
+
+                console.log(match)
+
+                recursiveAsyncAskCommand(); // Apparently can't cause a stack overflow for some reason, JS is weird
+            });
+        };
+
+        recursiveAsyncAskCommand()
     })
 
 program
