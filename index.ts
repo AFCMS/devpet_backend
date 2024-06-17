@@ -61,8 +61,8 @@ GitHub:
 
 Spotify:
 - Playing: ${spPlaying && spPlaying.is_playing ? `${spPlaying.item.name} by ${
-                // @ts-expect-error
-                spPlaying.item.artists.map((a: any) => a.name).join(", ")
+                // @ts-expect-error Spotify SDK sucks
+                spPlaying.item.artists.map((a: { name: string }) => a.name).join(", ")
             }` : "Nothing"}
 =================================
 `))
@@ -85,7 +85,9 @@ Spotify:
 
             if (spPlaying && spPlaying.is_playing) {
                 // @ts-expect-error Spotify SDK sucks
-                handler.sendCommand("music-play", `${spPlaying.item.name}^${spPlaying.item.artists.map((a: any) => a.name).join(", ")}`)
+                handler.sendCommand("music-play", `${spPlaying.item.name}^${spPlaying.item.artists.map((a: {
+                    name: string
+                }) => a.name).join(", ")}`)
             }
         }, 10 * 1000)
 
