@@ -43,7 +43,7 @@ sudo rfcomm connect /dev/rfcomm0 <DEVICE ADDRESS> 1
 >
 > The `rfcomm` utility is deprecated and doesn't have a clear replacement.
 >
-> Ideally there should be a device driver automatically connecting the device as a serial device using BlueZ DBus API
+> Ideally there should be a driver automatically connecting the device as a serial device using BlueZ DBus API
 
 ### Setup environment variables
 
