@@ -22,6 +22,10 @@ const splashScreen = `╔══════════════════�
 ║                            Backend ║                      
 ╚════════════════════════════════════╝`
 
+process.on("SIGINT", function () {
+    process.exit();
+});
+
 const program = new commander.Command()
 
 
