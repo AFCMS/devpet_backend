@@ -11,14 +11,14 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 ### Install NodeJS
 
-The required version of NodeJS is LTS/Iron (v20).
+The required version of [NodeJS](https://nodejs.org) is LTS/Iron (v20) with the [PNPM](https://pnpm.io) package manager.
 
 You can use [NVM](https://github.com/nvm-sh/nvm) to install it.
 
 ### Install dependencies
 
 ```bash
-npm install --include=dev
+pnpm install --include=dev
 ```
 
 ### Connect the ESP32 serial port (Linux instructions)
@@ -70,11 +70,11 @@ Set `DEVPET_SPOTIFY_CLIENT_ID` and `DEVPET_SPOTIFY_CLIENT_SECRET` to the given v
 Then you can login to your own OAuth2 app by running the following command and clicking the displayed link:
 
 ```shell
-npm start spotify-login
+pnpm start spotify-login
 ```
 
 ### Start the backend
 
 ```shell
-npm start run
+pnpm start run
 ```
