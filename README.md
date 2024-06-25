@@ -49,6 +49,11 @@ sudo rfcomm connect /dev/rfcomm0 <DEVICE ADDRESS> 1
 
 You can copy the `.env.example` file and fill out the values with the following instructions
 
+#### Serial Port
+
+Set `DEVPET_SERIAL_PORT` to the serial port where the ESP32 is connected, typically the `/dev/rfcomm0` if you used
+rfcomm as above.
+
 #### GitHub
 
 Go to your GitHub user account settings in the developper tab, create a
