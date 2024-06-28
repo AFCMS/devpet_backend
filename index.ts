@@ -107,15 +107,36 @@ Spotify:
 program
     .command("run-test")
     .description("Run backend with fake GitHub data")
-    .action(async () => {
+    .option("-s, --spotify", "Enable real Spotify data", false)
+    .action(async (options: { spotify: boolean }) => {
         console.log(chalk.green(splashScreen))
         const spClient = SpotifyClient.getInstance(process.env.DEVPET_SPOTIFY_CLIENT_ID, process.env.DEVPET_SPOTIFY_CLIENT_SECRET)
         const handler = new CommHandler(process.env.DEVPET_SERIAL_PORT, false)
 
-        // Refresh Spotify token every 30mn (the token should expire every 1h)
-        setInterval(async () => {
-            await spClient.doRefreshToken()
-        }, 30 * 60 * 1000)
+        if (options.spotify) {
+            // Fetch only Spotify data
+            setInterval(async () => {
+                // Spotify SDK sucks
+                let spPlaying: PlaybackState | undefined
+                try {
+                    spPlaying = await spClient.getPlayingTrack()
+                } catch (TypeError) {
+                    spPlaying = undefined
+                }
+
+                if (spPlaying && spPlaying.is_playing) {
+                    // @ts-expect-error Spotify SDK sucks
+                    handler.sendCommand("music-play", `${spPlaying.item.name}^${spPlaying.item.artists.map((a: {
+                        name: string
+                    }) => a.name).join(", ")}`)
+                }
+            }, 10 * 1000)
+
+            // Refresh Spotify token every 30mn (the token should expire every 1h)
+            setInterval(async () => {
+                await spClient.doRefreshToken()
+            }, 30 * 60 * 1000)
+        }
 
         const rl = readline.createInterface({
             input: process.stdin,
